@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 
+from box_helper import is_within_bb
 from detector_base import Detector
 
 
@@ -9,7 +10,7 @@ class LatexHoleDetector(Detector):
         a_lab = cv.cvtColor(self.img, cv.COLOR_BGR2LAB)
 
         # Find latex mask
-        largest_contour = self.find_latex_contour(self.img)
+        largest_bounding_box = self.find_latex_bounding_box(self.img)
 
         # Find skin mask
         a_contours = self.find_skin_contours(a_lab)
@@ -23,7 +24,9 @@ class LatexHoleDetector(Detector):
                 minRectangle[i] = cv.boundingRect(contour)
 
         overlay = np.zeros(
-            (self.img.shape[0], self.img.shape[1], 4), dtype="uint8")
+            (self.img.shape[0], self.img.shape[1], 4),
+            dtype="uint8"
+        )
 
         # draw contours
         for i, contour in enumerate(a_contours):
@@ -34,28 +37,29 @@ class LatexHoleDetector(Detector):
             if aspect_ratio < 1 and aspect_ratio > 0:
                 aspect_ratio = 1 / aspect_ratio
 
-            is_within_mask = cv.pointPolygonTest(
-                largest_contour,
-                (x + w/2, y + h/2),
-                False
+            is_within_mask = is_within_bb(
+                largest_bounding_box,
+                x + w/2,
+                y + h/2
             )
 
-            if aspect_ratio < 2 and area > 200 and is_within_mask >= 0:
+            if aspect_ratio < 2 and area > 200 and is_within_mask == True:
                 cv.rectangle(overlay, minRectangle[i], (0, 0, 255, 255), 2)
 
                 # doing this to center the text
-                message = f'Hole (a: {area:.2f}, r: {aspect_ratio:.2f})'
+                message = f'Hole'
                 text_size, _ = cv.getTextSize(
                     message,
                     cv.FONT_HERSHEY_SIMPLEX,
                     0.5,
                     1
                 )
-                text_width, _ = text_size
+                text_width, text_height = text_size
                 cv.putText(
                     overlay,
                     message,
-                    (int(box[0] - (text_width / 2)), box[1] - 10),
+                    (int(box[0] + (text_width / 2)),
+                     (box[1] + box[3]) + text_height + 5),
                     cv.FONT_HERSHEY_SIMPLEX,
                     0.5,
                     (0, 0, 255, 255),
@@ -81,7 +85,7 @@ class LatexHoleDetector(Detector):
         # cv.imshow("a_fill", a_fill)
 
         a_canny = cv.Canny(a_fill, 0, 255)
-        # cv.imshow("a_canny", a_canny)
+        # cv.imshow("a_hole_canny", a_canny)
 
         # find contours
         a_contours, _ = cv.findContours(
@@ -92,14 +96,14 @@ class LatexHoleDetector(Detector):
 
         return a_contours
 
-    def find_latex_contour(self, img):
+    def find_latex_bounding_box(self, img):
         latex_lower = np.array([0, 0, 0])
         latex_higher = np.array([255, 120, 255])
         a_hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
         latex_extracted = cv.inRange(a_hsv, latex_lower, latex_higher)
         latex_extracted = cv.bitwise_not(latex_extracted, latex_extracted)
-        latex_extracted = cv.erode(latex_extracted, None, iterations=2)
-        latex_extracted = cv.dilate(latex_extracted, None, iterations=4)
+        latex_extracted = cv.erode(latex_extracted, None, iterations=1)
+        latex_extracted = cv.dilate(latex_extracted, None, iterations=1)
 
         latex_contours, _ = cv.findContours(
             latex_extracted,
@@ -121,8 +125,8 @@ class LatexHoleDetector(Detector):
             cv.drawContours(latex_extracted, [cnt], -1, (0, 255, 0), 3)
 
         latex_extracted = cv.bitwise_not(latex_extracted)
-        # cv.imshow("latex_extracted", latex_extracted)
-        return largest_contour
+        # cv.imshow("latex_hole_extracted", latex_extracted)
+        return cv.boundingRect(largest_contour)
 
 
 # def detect_old(a):

@@ -15,8 +15,8 @@ if __name__ == "__main__":
         sys.exit("No input image")
 
     # add your detection code here
-    hole_result = LatexTearDetector(a).detect()
-    tear_result = LatexHoleDetector(a).detect()
+    hole_result = LatexHoleDetector(a).detect()
+    tear_result = LatexTearDetector(a).detect()
 
     combined_result = np.zeros((a.shape[0], a.shape[1], 4), dtype="uint8")
 
