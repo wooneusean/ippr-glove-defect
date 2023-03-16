@@ -3,13 +3,12 @@ import sys
 import cv2 as cv
 import numpy as np
 
-import latex_hole
-from latex_hole import LatexHoleDetector
-from latex_stain import LatexStainDetector
-from latex_tear import LatexTearDetector
+from detectors.latex_hole import LatexHoleDetector
+from detectors.latex_stain import LatexStainDetector
+from detectors.latex_tear import LatexTearDetector
 
 if __name__ == "__main__":
-    a = cv.imread("img/blue_glove_hole_1.jpg")
+    a = cv.imread("img/blue_glove_tear_3.jpg")
 
     if a is None:
         sys.exit("No input image")
@@ -17,11 +16,12 @@ if __name__ == "__main__":
     # add your detection code here
     hole_result = LatexHoleDetector(a).detect()
     tear_result = LatexTearDetector(a).detect()
+    stain_result = LatexStainDetector(a).detect()
 
     combined_result = np.zeros((a.shape[0], a.shape[1], 4), dtype="uint8")
 
     # then add the result into this array
-    for result in [hole_result, tear_result]:
+    for result in [hole_result, tear_result, stain_result]:
         combined_result += result
 
     alpha_foreground = combined_result[:, :, 3] / 255.0

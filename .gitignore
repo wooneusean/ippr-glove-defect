@@ -1,4 +1,4 @@
-img/
+img/*
 venv/
 __pycache__/
 .vscode/
