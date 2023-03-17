@@ -63,7 +63,7 @@ class App(tk.Tk):
 
     def on_image_select(self, event):
         img_index = self.images_listbox.curselection()[0]
-        pil_img = Image.open('img/' + self.image_list[img_index])
+        pil_img = Image.open('img/' + self.image_list[img_index]).resize((416, 416))
         self.ori_image = ImageTk.PhotoImage(pil_img)
         self.ori_image_label.configure(image=self.ori_image)
 

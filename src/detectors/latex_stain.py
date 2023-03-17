@@ -12,6 +12,14 @@ class LatexStainDetector:
         # Find latex mask
         latex_contour = find_latex_contour(self.img)
 
+        overlay = np.zeros(
+            (self.img.shape[0], self.img.shape[1], 4),
+            dtype="uint8"
+        )
+
+        if latex_contour is None:
+            return overlay
+
         # Find stain mask
         stain_contours = find_stain_contours(self.img)
 
@@ -22,11 +30,6 @@ class LatexStainDetector:
             minRect[i] = cv.minAreaRect(contour)
             if contour.shape[0] > 5:
                 minRectangle[i] = cv.boundingRect(contour)
-
-        overlay = np.zeros(
-            (self.img.shape[0], self.img.shape[1], 4),
-            dtype="uint8"
-        )
 
         # draw contours
         for i, contour in enumerate(stain_contours):
@@ -63,8 +66,8 @@ class LatexStainDetector:
                 cv.rectangle(overlay, minRectangle[i], (255, 0, 0, 255), 2)
 
                 # doing this to center the text
-                message = f'Stain ({int(area)}), {aspect_ratio:.2f}, {is_within_mask:.2f})'
-                # message = 'Stain'
+                # message = f'Stain ({int(area)}), {aspect_ratio:.2f}, {is_within_mask:.2f})'
+                message = 'Stain'
                 text_size, _ = cv.getTextSize(
                     message,
                     cv.FONT_HERSHEY_SIMPLEX,
