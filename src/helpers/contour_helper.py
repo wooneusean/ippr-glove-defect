@@ -54,6 +54,7 @@ def find_latex_contour(img):
     latex_extracted = cv.bitwise_not(latex_extracted, latex_extracted)
     latex_extracted = cv.erode(latex_extracted, None, iterations=1)
     latex_extracted = cv.dilate(latex_extracted, None, iterations=1)
+    # cv.imshow("latex_extracted", latex_extracted)
 
     latex_contours, hierarchy = cv.findContours(
         latex_extracted,
@@ -61,7 +62,6 @@ def find_latex_contour(img):
         cv.CHAIN_APPROX_SIMPLE
     )
     # cv.imshow("latex_extracted", latex_extracted)
-    latex_extracted = cv.bitwise_not(latex_extracted)
     largest_contour = None
     largest_contour_area = -1
     for i, cnt in enumerate(latex_contours):
@@ -71,16 +71,27 @@ def find_latex_contour(img):
 
         current_contour_area = cv.contourArea(cnt)
 
+        # cv.drawContours(img, [cnt], -1, (0, 255, 0), 2)
+        # cv.putText(
+        #     img,
+        #     str(current_contour_area),
+        #     tuple(cnt[0][0] + (10, 10)),
+        #     cv.FONT_HERSHEY_SIMPLEX,
+        #     0.5,
+        #     (0, 0, 255),
+        #     1,
+        #     cv.LINE_AA
+        # )
+
         if largest_contour is None:
             largest_contour = cnt
+            largest_contour_area = current_contour_area
         elif current_contour_area > largest_contour_area:
             largest_contour = cnt
-            largest_contour_area = cv.contourArea(cnt)
+            largest_contour_area = current_contour_area
 
-    # cv.drawContours(img_copy, [largest_contour], -1, (0, 255, 0), 2)
-
-    latex_extracted = cv.bitwise_not(latex_extracted)
-    # cv.imshow("latex_hole_extracted", img_copy)
+    # cv.drawContours(img, [largest_contour], -1, (0, 255, 0), 2)
+    # cv.imshow("latex_hole_extracted", img)
     return largest_contour
 
 
@@ -97,12 +108,6 @@ def find_stain_contours(img):
         stain_one_lower,
         stain_one_higher
     )
-    stain_one_extracted = cv.morphologyEx(
-        stain_one_extracted,
-        cv.MORPH_CLOSE,
-        strel
-    )
-    # cv.imshow("stain_one_extracted", stain_one_extracted)
     stain_one_extracted = cv.erode(
         stain_one_extracted,
         strel,
@@ -113,33 +118,42 @@ def find_stain_contours(img):
         strel,
         iterations=3
     )
+    stain_one_extracted = cv.Canny(stain_one_extracted, 0, 255)
+    stain_one_extracted = cv.morphologyEx(
+        stain_one_extracted,
+        cv.MORPH_CLOSE,
+        strel
+    )
+    # cv.imshow("stain_one_extracted", stain_one_extracted)
 
     # Black marker stains
-    stain_two_lower =   np.array([65, 115, 110])
-    stain_two_higher =  np.array([90, 135, 125])
+    stain_two_lower =   np.array([35, 125, 105])
+    stain_two_higher =  np.array([85, 135, 125])
+    # stain_two_lower = np.array([40, 115, 100])
+    # stain_two_higher = np.array([85, 135, 120])
 
     stain_two_extracted = cv.inRange(
         img_lab,
         stain_two_lower,
         stain_two_higher
     )
-
-    # stain_two_extracted = cv.morphologyEx(
-    #     stain_two_extracted,
-    #     cv.MORPH_CLOSE,
-    #     strel
-    # )
+    stain_two_extracted = cv.morphologyEx(
+        stain_two_extracted,
+        cv.MORPH_CLOSE,
+        strel
+    )
     stain_two_extracted = cv.erode(
         stain_two_extracted,
         strel,
         iterations=1
     )
-    # cv.imshow("stain_two_extracted", stain_two_extracted)
     stain_two_extracted = cv.dilate(
         stain_two_extracted,
         strel,
         iterations=3
     )
+    # cv.imshow("stain_two_extracted", stain_two_extracted)
+    stain_two_extracted = cv.Canny(stain_two_extracted, 0, 255)
     # cv.imshow("stain_two_extracted", stain_two_extracted)
 
     stain_combined_extracted = cv.bitwise_or(
@@ -152,10 +166,14 @@ def find_stain_contours(img):
         cv.RETR_TREE,
         cv.CHAIN_APPROX_SIMPLE
     )
+
     # cv.drawContours(img, stain_contours, -1, (0, 255, 0), 2)
-    # cv.imshow("stain_combined_extracted", stain_combined_extracted)
+    # cv.imshow("stain_combined_extracted", img)
     return stain_contours
 
 
-# find_stain_contours(cv.imread("img/blue_glove_stain_1.jpg"))
-# cv.waitKey(0)
+if __name__ == "__main__":
+    img = cv.imread("img/blue_glove_hole_5.jpg")
+    cv.imshow("img", img)
+    find_latex_contour(img)
+    cv.waitKey(0)

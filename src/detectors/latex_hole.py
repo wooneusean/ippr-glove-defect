@@ -52,6 +52,7 @@ class LatexHoleDetector(Detector):
             box = cv.boundingRect(contour)
             bounding_box_area = box[2] * box[3]
             if aspect_ratio < 2 and bounding_box_area > 400 and is_within_mask >= 0:
+            # if area > 100:
                 cv.rectangle(
                     overlay,
                     box,

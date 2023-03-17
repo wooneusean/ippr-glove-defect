@@ -55,16 +55,16 @@ class LatexStainDetector:
                 False
             )
 
-            area = cv.contourArea(contour)
-            # if aspect_ratio < 2.25 and area > 150 and area < 2000 and is_within_mask >= 0:
-            if area > 50:
+            area = cv.contourArea(contour, True)
+            if aspect_ratio < 2.25 and area > 150 and area < 2000 and is_within_mask >= 0:
+            # if area > 100:
                 box = cv.boundingRect(contour)
 
                 cv.rectangle(overlay, minRectangle[i], (255, 0, 0, 255), 2)
 
                 # doing this to center the text
-                # message = f'Stain ({int(area)}), {aspect_ratio:.2f}, {is_within_mask:.2f})'
-                message = 'Stain'
+                message = f'Stain ({int(area)}), {aspect_ratio:.2f}, {is_within_mask:.2f})'
+                # message = 'Stain'
                 text_size, _ = cv.getTextSize(
                     message,
                     cv.FONT_HERSHEY_SIMPLEX,
