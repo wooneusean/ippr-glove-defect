@@ -159,3 +159,14 @@ def find_stain_contours(img):
 
 # find_stain_contours(cv.imread("img/blue_glove_stain_1.jpg"))
 # cv.waitKey(0)
+
+def find_cloth_contours(img):
+    cloth_lower = np.array([])
+    cloth_higher = np.array([])
+    img_hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
+    cloth_extracted = cv.inRange(img_hsv, cloth_lower, cloth_higher)
+    cloth_extracted = cv.bitwise_not
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    cloth_extracted = cv.morphologyEx(cloth_extracted, cv.MORPH_OPEN, kernel)
+
+find_cloth_contours(cv.imread("../img/black_fabric.png"))
