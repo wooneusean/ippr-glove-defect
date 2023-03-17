@@ -1,5 +1,6 @@
 import cv2 as cv
 import numpy as np
+from src.helpers.image_helper import resize_image
 
 
 def find_skin_contours(img):
@@ -161,12 +162,29 @@ def find_stain_contours(img):
 # cv.waitKey(0)
 
 def find_cloth_contours(img):
-    cloth_lower = np.array([])
-    cloth_higher = np.array([])
+    cloth_lower = np.array([0, 0, 0])
+    cloth_higher = np.array([255, 255, 150])
     img_hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
     cloth_extracted = cv.inRange(img_hsv, cloth_lower, cloth_higher)
-    cloth_extracted = cv.bitwise_not
+    cloth_extracted = cv.bitwise_not(cloth_extracted)
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
     cloth_extracted = cv.morphologyEx(cloth_extracted, cv.MORPH_OPEN, kernel)
+    cloth_extracted = resize_image(cloth_extracted, 0.5)
 
-find_cloth_contours(cv.imread("../img/black_fabric.png"))
+    cloth_contours, hierarchy = cv.findContours(cloth_extracted, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+    largest_contour = None
+    largest_contour_area = -1
+    for i, contour in enumerate(cloth_contours):
+        if hierarchy[0][i][3] != -1:
+            continue
+
+        current_contour_area = cv.contourArea(contour)
+
+        if largest_contour_area is None:
+            largest_contour = current_contour_area
+        elif current_contour_area > largest_contour_area:
+            largest_contour = contour
+            largest_contour_area = current_contour_area
+
+    return largest_contour
