@@ -14,7 +14,7 @@ class OvenFrostingDetector(Detector):
             (self.img.shape[0], self.img.shape[1], 4),
             dtype="uint8")
 
-        if oven_contour is None:
+        if frosting_contours is None:
             return overlay
 
         for i, contour in enumerate(frosting_contours):
@@ -25,18 +25,17 @@ class OvenFrostingDetector(Detector):
             center_y = y + h/2
             is_on_glove = cv.pointPolygonTest(
                 oven_contour,
-                # (center_x, center_y),
-                (x, y),
+                (center_x, center_y),
                 False
             )
 
             if is_on_glove:
-                cv.rectangle(overlay, (x, y), ((x+w), (y+h)), (0, 255, 255), 3)
+                cv.rectangle(overlay, (x, y), ((x+w), (y+h)), (0, 255, 0, 255), 2)
 
-            cv.imshow("overlay", overlay)
-            cv.waitKey(0)
+            # cv.imshow("overlay", overlay)
+            # cv.waitKey(0)
 
-            message = 'Hole'
+            message = 'Frosting'
             text_size, _ = cv.getTextSize(
                 message,
                 cv.FONT_HERSHEY_SIMPLEX,
@@ -48,20 +47,22 @@ class OvenFrostingDetector(Detector):
             cv.putText(
                 overlay,
                 message,
-                (x+w, y+h),
+                (x, y+h+text_height+5),
                 cv.FONT_HERSHEY_SIMPLEX,
                 0.5,
-                (0, 0, 255, 255),
+                (0, 255, 0, 255),
                 1,
                 cv.LINE_AA,
             )
 
 
-        cv.imshow("overlay", overlay)
-        cv.waitKey(0)
+        # cv.imshow("overlay", overlay)
+
+        # cv.waitKey(0)
+
         return overlay
 
 
-img = cv.imread("../img/oven_frosting.png")
-img = cv.resize(img, (500, 500))
-OvenFrostingDetector(img).detect()
+# img = cv.imread("../img/oven_frosting.png")
+# img = cv.resize(img, (500, 500))
+# OvenFrostingDetector(img).detect()

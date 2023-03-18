@@ -172,11 +172,11 @@ def find_stain_contours(img):
     # cv.imshow("stain_combined_extracted", img)
     return stain_contours
 
-# if __name__ == "__main__":
-#     img = cv.imread("img/blue_glove_hole_5.jpg")
-#     cv.imshow("img", img)
-#     find_latex_contour(img)
-#     cv.waitKey(0)
+if __name__ == "__main__":
+    img = cv.imread("img/blue_glove_hole_5.jpg")
+    cv.imshow("img", img)
+    find_latex_contour(img)
+    cv.waitKey(0)
 def find_oven_contours(img):
     oven_lower = np.array([220, 126, 0])
     oven_upper = np.array([255, 132, 130])

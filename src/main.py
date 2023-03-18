@@ -89,9 +89,12 @@ class App(tk.Tk):
         alpha_foreground = combined_result[:, :, 3] / 255.0
         for color in range(0, 3):
             np_img[:, :, color] = (1.0 - alpha_foreground) * np_img[:, :, color] + \
-                alpha_foreground * combined_result[:, :, color]
+                                  alpha_foreground * combined_result[:, :, color]
+
 
         np_img = cv.cvtColor(np_img, cv.COLOR_RGB2BGR)
+        # cv.imshow("np_img", np_img)
+        # cv.waitKey(0)
         pil_img = Image.fromarray(np.uint8(np_img))
         self.prc_image = ImageTk.PhotoImage(pil_img)
         self.prc_image_label.configure(image=self.prc_image)
