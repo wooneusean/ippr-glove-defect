@@ -2,22 +2,22 @@ import numpy as np
 import cv2 as cv
 
 from src.detectors.detector_base import Detector
-from src.helpers.contour_helper import find_frosting_contour, find_oven_contours
+from src.helpers.contour_helper import find_burn_contour, find_oven_contours
 
 
-class OvenFrostingDetector(Detector):
+class OvenBurnDetector(Detector):
     def detect(self):
         oven_contour = find_oven_contours(self.img)
-        frosting_contours = find_frosting_contour(self.img)
+        burn_contours = find_burn_contour(self.img)
 
         overlay = np.zeros(
             (self.img.shape[0], self.img.shape[1], 4),
             dtype="uint8")
 
-        if frosting_contours is None:
+        if burn_contours is None:
             return overlay
 
-        for i, contour in enumerate(frosting_contours):
+        for i, contour in enumerate(burn_contours):
 
             x, y, w, h = cv.boundingRect(contour)
 
@@ -35,7 +35,7 @@ class OvenFrostingDetector(Detector):
             # cv.imshow("overlay", overlay)
             # cv.waitKey(0)
 
-            message = 'Frosting'
+            message = 'Burn'
             text_size, _ = cv.getTextSize(
                 message,
                 cv.FONT_HERSHEY_SIMPLEX,
@@ -62,6 +62,6 @@ class OvenFrostingDetector(Detector):
         return overlay
 
 
-# img = cv.imread("../img/oven_frosting_1.png")
+# img = cv.imread("../img/oven_burn_1.png")
 # img = cv.resize(img, (500, 500))
-# OvenFrostingDetector(img).detect()
+# OvenBurnDetector(img).detect()

@@ -172,11 +172,11 @@ def find_stain_contours(img):
     # cv.imshow("stain_combined_extracted", img)
     return stain_contours
 
-if __name__ == "__main__":
-    img = cv.imread("img/blue_glove_hole_5.jpg")
-    cv.imshow("img", img)
-    find_latex_contour(img)
-    cv.waitKey(0)
+# if __name__ == "__main__":
+#     img = cv.imread("img/blue_glove_hole_5.jpg")
+#     cv.imshow("img", img)
+#     find_latex_contour(img)
+#     cv.waitKey(0)
 def find_oven_contours(img):
     oven_lower = np.array([220, 126, 0])
     oven_upper = np.array([255, 132, 130])
@@ -232,15 +232,52 @@ def find_frosting_contour(img):
         cv.CHAIN_APPROX_NONE
     )
 
+    new_contours = []
+    for contour in contours:
+        contour_area = cv.contourArea(contour)
+        if contour_area > 75:
+            new_contours.append(contour)
+
     # cv.drawContours(img, contours, -1, (255, 0, 0), 3)
     # cv.imshow("contours", img)
+    # cv.waitKey(0)
 
-    return contours
-
-    cv.waitKey(0)
+    return new_contours
 
 
-# img = cv.imread("../img/oven_frosting.png")
+def find_burn_contour(img):
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    burn_lower = np.array([0, 0, 0])
+    burn_upper = np.array([25, 255, 255])
+    burn_extracted = cv.inRange(img_lab, burn_lower, burn_upper)
+
+    # cv.imshow("burn_extracted", burn_extracted)
+
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    burn_closed = cv.morphologyEx(burn_extracted, cv.MORPH_CLOSE, kernel)
+
+    contours, hierarchy = cv.findContours(
+        burn_closed,
+        cv.RETR_EXTERNAL,
+        cv.CHAIN_APPROX_NONE
+    )
+
+    new_contours = []
+    for contour in contours:
+        contour_area = cv.contourArea(contour)
+        if contour_area > 75:
+            new_contours.append(contour)
+
+    # cv.drawContours(img, new_contours, -1, (255, 0, 0), 3)
+    # cv.imshow("contours", img)
+    # cv.waitKey(0)
+
+    return new_contours
+
+
+
+# img = cv.imread("../img/oven_burn_1.png")
 # img = cv.resize(img, (500, 500))
 # find_oven_contours(img)
 # find_frosting_contour(img)
+# find_burn_contour(img)

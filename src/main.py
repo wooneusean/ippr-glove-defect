@@ -10,6 +10,7 @@ from detectors.latex_hole import LatexHoleDetector
 from detectors.latex_stain import LatexStainDetector
 from detectors.latex_tear import LatexTearDetector
 from detectors.oven_frosting import OvenFrostingDetector
+from src.detectors.oven_burn import OvenBurnDetector
 
 
 class App(tk.Tk):
@@ -77,13 +78,14 @@ class App(tk.Tk):
         # stain_result = LatexStainDetector(np_img).detect()
 
         frosting_result = OvenFrostingDetector(np_img).detect()
+        burn_results = OvenBurnDetector(np_img).detect()
 
         combined_result = np.zeros(
             (np_img.shape[0], np_img.shape[1], 4), dtype='uint8')
 
         # then add the result into this array
         # for result in [hole_result, tear_result, stain_result]:
-        for result in [frosting_result]:
+        for result in [frosting_result, burn_results]:
             combined_result += result
 
         alpha_foreground = combined_result[:, :, 3] / 255.0
@@ -93,8 +95,6 @@ class App(tk.Tk):
 
 
         np_img = cv.cvtColor(np_img, cv.COLOR_RGB2BGR)
-        # cv.imshow("np_img", np_img)
-        # cv.waitKey(0)
         pil_img = Image.fromarray(np.uint8(np_img))
         self.prc_image = ImageTk.PhotoImage(pil_img)
         self.prc_image_label.configure(image=self.prc_image)
