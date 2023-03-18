@@ -12,6 +12,14 @@ class LatexStainDetector:
         # Find latex mask
         latex_contour = find_latex_contour(self.img)
 
+        overlay = np.zeros(
+            (self.img.shape[0], self.img.shape[1], 4),
+            dtype="uint8"
+        )
+
+        if latex_contour is None:
+            return overlay
+
         # Find stain mask
         stain_contours = find_stain_contours(self.img)
 
@@ -22,11 +30,6 @@ class LatexStainDetector:
             minRect[i] = cv.minAreaRect(contour)
             if contour.shape[0] > 5:
                 minRectangle[i] = cv.boundingRect(contour)
-
-        overlay = np.zeros(
-            (self.img.shape[0], self.img.shape[1], 4),
-            dtype="uint8"
-        )
 
         # draw contours
         for i, contour in enumerate(stain_contours):
@@ -55,9 +58,9 @@ class LatexStainDetector:
                 False
             )
 
-            area = cv.contourArea(contour)
-            # if aspect_ratio < 2.25 and area > 150 and area < 2000 and is_within_mask >= 0:
-            if area > 50:
+            area = cv.contourArea(contour, True)
+            if aspect_ratio < 2.25 and area > 150 and area < 2000 and is_within_mask >= 0:
+            # if area > 100:
                 box = cv.boundingRect(contour)
 
                 cv.rectangle(overlay, minRectangle[i], (255, 0, 0, 255), 2)

@@ -4,8 +4,8 @@ import numpy as np
 ###############
 # This is a helper file to find color values for any image
 ###############
-value_lower     = np.array([65, 115, 110])
-value_higher    = np.array([85, 130, 125])
+value_lower =   np.array([35, 125, 105])
+value_higher =  np.array([85, 135, 125])
 
 value_thresh = 0
 
@@ -80,7 +80,7 @@ def update_scalar(a):
 
 
 a = cv.imread("img/blue_glove_stain_2.jpg")
-b = cv.imread("img/blue_glove_hole_3.jpg")
+b = cv.imread("img/blue_glove_hole_5.jpg")
 c = np.hstack((a, b))
 cv.imshow("Original c", c)
 

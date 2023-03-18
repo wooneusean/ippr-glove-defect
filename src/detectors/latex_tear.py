@@ -11,6 +11,14 @@ class LatexTearDetector(Detector):
         # Find latex mask
         latex_contour = find_latex_contour(self.img)
 
+        overlay = np.zeros(
+            (self.img.shape[0], self.img.shape[1], 4),
+            dtype="uint8"
+        )
+
+        if latex_contour is None:
+            return overlay
+
         # Find skin mask
         skin_contours = find_skin_contours(self.img)
 
@@ -21,11 +29,6 @@ class LatexTearDetector(Detector):
             minRect[i] = cv.minAreaRect(contour)
             if contour.shape[0] > 5:
                 minEllipse[i] = cv.fitEllipse(contour)
-
-        overlay = np.zeros(
-            (self.img.shape[0], self.img.shape[1], 4),
-            dtype="uint8"
-        )
 
         # draw contours
         for i, contour in enumerate(skin_contours):
