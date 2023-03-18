@@ -275,9 +275,45 @@ def find_burn_contour(img):
     return new_contours
 
 
+def find_flour_contour(img):
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    flour_lower = np.array([160, 115, 110])
+    flour_upper = np.array([255, 130, 150])
+    flour_extracted = cv.inRange(img_lab, flour_lower, flour_upper)
 
-# img = cv.imread("../img/oven_burn_1.png")
+    # cv.imshow("flour_extracted", flour_extracted)
+
+    kernel = cv.getStructuringElement(cv.MORPH_CROSS, (5, 5))
+    flour_morph = cv.dilate(flour_extracted, kernel, iterations=4)
+    # flour_morph = cv.erode(flour_morph, kernel, iterations=2)
+
+    # cv.imshow("flour_closed", flour_morph)
+
+    contours, hierarchy = cv.findContours(
+        flour_morph,
+        cv.RETR_TREE,
+        cv.CHAIN_APPROX_NONE
+    )
+
+
+    new_contours = []
+    for contour in contours:
+        contour_area = cv.contourArea(contour)
+        if contour_area > 1000 and contour_area < 10000:
+            print(contour_area)
+            new_contours.append(contour)
+
+    # cv.drawContours(img, new_contours, -1, (255, 0, 0), 3)
+    # cv.imshow("contours", img)
+    # cv.waitKey(0)
+
+    return new_contours
+
+
+
+# img = cv.imread("../img/oven_frosting_1.png")
 # img = cv.resize(img, (500, 500))
 # find_oven_contours(img)
 # find_frosting_contour(img)
 # find_burn_contour(img)
+# find_flour_contour(img)

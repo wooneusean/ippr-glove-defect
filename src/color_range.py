@@ -5,7 +5,7 @@ def on_change(val):
     pass
 
 
-img = cv2.imread('./img/oven_burn_1.png')
+img = cv2.imread('./img/oven_frosting_2.png')
 img = cv2.resize(img, (400, 400))
 
 windowName = 'image'
