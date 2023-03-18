@@ -178,12 +178,14 @@ def find_stain_contours(img):
 #     find_latex_contour(img)
 #     cv.waitKey(0)
 def find_oven_contours(img):
-    oven_lower = np.array([0, 70, 125])
-    oven_upper = np.array([255, 115, 155])
+    oven_lower = np.array([220, 126, 0])
+    oven_upper = np.array([255, 132, 130])
     img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
     oven_extracted = cv.inRange(img_lab, oven_lower, oven_upper)
-    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
-    oven_extracted = cv.morphologyEx(oven_extracted, cv.MORPH_CLOSE, kernel)
+    cv.bitwise_not(oven_extracted, oven_extracted)
+
+    # kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    # oven_extracted = cv.morphologyEx(oven_extracted, cv.MORPH_CLOSE, kernel)
 
     # cv.imshow("oven_extracted", oven_extracted)
 
@@ -207,10 +209,10 @@ def find_oven_contours(img):
             largest_contour = contour
             largest_contour_area = current_contour_area
 
-    cv.drawContours(img, [largest_contour], -1, (0, 255, 0), 4)
-    cv.imshow("oven_hole_extracted", img)
+    # cv.drawContours(img, [largest_contour], -1, (0, 255, 0), 4)
+    # cv.imshow("oven_hole_extracted", img)
+    # cv.waitKey(0)
 
-    cv.waitKey(0)
     return largest_contour
 
 def find_frosting_contour(img):
@@ -224,15 +226,21 @@ def find_frosting_contour(img):
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
     frosting_closed = cv.morphologyEx(frosting_extracted, cv.MORPH_CLOSE, kernel)
 
+    contours, hierarchy = cv.findContours(
+        frosting_closed,
+        cv.RETR_EXTERNAL,
+        cv.CHAIN_APPROX_NONE
+    )
 
-    frosting_closed, contours = cv.findContours(frosting_closed, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
-    cv.drawContours(frosting_closed, contours, -1, (0, 0, 255), 4)
+    # cv.drawContours(img, contours, -1, (255, 0, 0), 3)
+    # cv.imshow("contours", img)
 
-    cv.imshow("frosting_closed", frosting_closed)
+    return contours
+
     cv.waitKey(0)
 
 
-img = cv.imread("../img/oven_frosting.png")
-img = cv.resize(img, (500, 500))
+# img = cv.imread("../img/oven_frosting.png")
+# img = cv.resize(img, (500, 500))
 # find_oven_contours(img)
-find_frosting_contour(img)
+# find_frosting_contour(img)
