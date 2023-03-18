@@ -1,6 +1,5 @@
 import cv2 as cv
 import numpy as np
-from src.helpers.image_helper import resize_image
 
 
 def find_skin_contours(img):
@@ -47,6 +46,7 @@ def find_skin_contours(img):
     return a_contours
 
 
+
 def find_latex_contour(img):
     latex_lower = np.array([0, 0, 0])
     latex_higher = np.array([255, 120, 255])
@@ -75,7 +75,7 @@ def find_latex_contour(img):
         # cv.drawContours(img, [cnt], -1, (0, 255, 0), 2)
         # cv.putText(
         #     img,
-        #     str(current_contour_area),
+        #     str(current_contour_area),1
         #     tuple(cnt[0][0] + (10, 10)),
         #     cv.FONT_HERSHEY_SIMPLEX,
         #     0.5,
@@ -128,8 +128,8 @@ def find_stain_contours(img):
     # cv.imshow("stain_one_extracted", stain_one_extracted)
 
     # Black marker stains
-    stain_two_lower =   np.array([35, 125, 105])
-    stain_two_higher =  np.array([85, 135, 125])
+    stain_two_lower = np.array([35, 125, 105])
+    stain_two_higher = np.array([85, 135, 125])
     # stain_two_lower = np.array([40, 115, 100])
     # stain_two_higher = np.array([85, 135, 120])
 
@@ -172,37 +172,67 @@ def find_stain_contours(img):
     # cv.imshow("stain_combined_extracted", img)
     return stain_contours
 
-
-if __name__ == "__main__":
-    img = cv.imread("img/blue_glove_hole_5.jpg")
-    cv.imshow("img", img)
-    find_latex_contour(img)
-    cv.waitKey(0)
-
-def find_cloth_contours(img):
-    cloth_lower = np.array([0, 0, 0])
-    cloth_higher = np.array([255, 255, 150])
-    img_hsv = cv.cvtColor(img, cv.COLOR_BGR2HSV)
-    cloth_extracted = cv.inRange(img_hsv, cloth_lower, cloth_higher)
-    cloth_extracted = cv.bitwise_not(cloth_extracted)
+# if __name__ == "__main__":
+#     img = cv.imread("img/blue_glove_hole_5.jpg")
+#     cv.imshow("img", img)
+#     find_latex_contour(img)
+#     cv.waitKey(0)
+def find_oven_contours(img):
+    oven_lower = np.array([0, 70, 125])
+    oven_upper = np.array([255, 115, 155])
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    oven_extracted = cv.inRange(img_lab, oven_lower, oven_upper)
     kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
-    cloth_extracted = cv.morphologyEx(cloth_extracted, cv.MORPH_OPEN, kernel)
-    cloth_extracted = resize_image(cloth_extracted, 0.5)
+    oven_extracted = cv.morphologyEx(oven_extracted, cv.MORPH_CLOSE, kernel)
 
-    cloth_contours, hierarchy = cv.findContours(cloth_extracted, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    # cv.imshow("oven_extracted", oven_extracted)
+
+    oven_contours, hierarchy = cv.findContours(
+        oven_extracted,
+        cv.RETR_TREE,
+        cv.CHAIN_APPROX_SIMPLE
+    )
 
     largest_contour = None
     largest_contour_area = -1
-    for i, contour in enumerate(cloth_contours):
+    for i, contour in enumerate(oven_contours):
         if hierarchy[0][i][3] != -1:
             continue
 
         current_contour_area = cv.contourArea(contour)
 
         if largest_contour_area is None:
-            largest_contour = current_contour_area
+            largest_contour_area = current_contour_area
         elif current_contour_area > largest_contour_area:
             largest_contour = contour
             largest_contour_area = current_contour_area
 
+    cv.drawContours(img, [largest_contour], -1, (0, 255, 0), 4)
+    cv.imshow("oven_hole_extracted", img)
+
+    cv.waitKey(0)
     return largest_contour
+
+def find_frosting_contour(img):
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    frosting_lower = np.array([0, 130, 129])
+    frosting_upper = np.array([255, 255, 255])
+    frosting_extracted = cv.inRange(img_lab, frosting_lower, frosting_upper)
+
+    # cv.imshow("frosting_extracted", frosting_extracted)
+
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    frosting_closed = cv.morphologyEx(frosting_extracted, cv.MORPH_CLOSE, kernel)
+
+
+    frosting_closed, contours = cv.findContours(frosting_closed, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+    cv.drawContours(frosting_closed, contours, -1, (0, 0, 255), 4)
+
+    cv.imshow("frosting_closed", frosting_closed)
+    cv.waitKey(0)
+
+
+img = cv.imread("../img/oven_frosting.png")
+img = cv.resize(img, (500, 500))
+# find_oven_contours(img)
+find_frosting_contour(img)

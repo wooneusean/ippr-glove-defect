@@ -9,6 +9,7 @@ from PIL import Image, ImageTk
 from detectors.latex_hole import LatexHoleDetector
 from detectors.latex_stain import LatexStainDetector
 from detectors.latex_tear import LatexTearDetector
+from detectors.cloth_hole import ClothHoleDetector
 
 
 class App(tk.Tk):
@@ -71,15 +72,18 @@ class App(tk.Tk):
         np_img = cv.cvtColor(np_img, cv.COLOR_BGR2RGB)
 
         # add your detection code here
-        hole_result = LatexHoleDetector(np_img).detect()
-        tear_result = LatexTearDetector(np_img).detect()
-        stain_result = LatexStainDetector(np_img).detect()
+        # hole_result = LatexHoleDetector(np_img).detect()
+        # tear_result = LatexTearDetector(np_img).detect()
+        # stain_result = LatexStainDetector(np_img).detect()
+
+        hole_result = ClothHoleDetector(np_img).detect()
 
         combined_result = np.zeros(
             (np_img.shape[0], np_img.shape[1], 4), dtype='uint8')
 
         # then add the result into this array
-        for result in [hole_result, tear_result, stain_result]:
+        # for result in [hole_result, tear_result, stain_result]:
+        for result in [hole_result]:
             combined_result += result
 
         alpha_foreground = combined_result[:, :, 3] / 255.0

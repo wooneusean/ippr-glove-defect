@@ -1,4 +1,5 @@
-img/*
+src/img/*
 venv/
 __pycache__/
 .vscode/
+src/color_range.py
