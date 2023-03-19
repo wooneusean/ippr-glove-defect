@@ -46,7 +46,6 @@ def find_skin_contours(img):
     return a_contours
 
 
-
 def find_latex_contour(img):
     latex_lower = np.array([0, 0, 0])
     latex_higher = np.array([255, 120, 255])
@@ -127,6 +126,8 @@ def find_stain_contours(img):
     # cv.imshow("stain_one_extracted", stain_one_extracted)
 
     # Black marker stains
+    stain_two_lower = np.array([35, 125, 105])
+    stain_two_higher = np.array([85, 135, 125])
     # stain_two_lower = np.array([40, 115, 100])
     # stain_two_higher = np.array([85, 135, 120])
 
@@ -174,6 +175,8 @@ def find_stain_contours(img):
 #     cv.imshow("img", img)
 #     find_latex_contour(img)
 #     cv.waitKey(0)
+
+
 def find_oven_contours(img):
     oven_lower = np.array([220, 126, 0])
     oven_upper = np.array([255, 132, 130])
@@ -211,6 +214,7 @@ def find_oven_contours(img):
     # cv.waitKey(0)
 
     return largest_contour
+
 
 def find_frosting_contour(img):
     img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
@@ -298,7 +302,6 @@ def find_flour_contour(img):
         cv.RETR_TREE,
         cv.CHAIN_APPROX_NONE
     )
-
 
     new_contours = []
     for contour in contours:

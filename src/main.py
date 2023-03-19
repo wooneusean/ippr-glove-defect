@@ -9,9 +9,9 @@ from PIL import Image, ImageTk
 from detectors.latex_hole import LatexHoleDetector
 from detectors.latex_stain import LatexStainDetector
 from detectors.latex_tear import LatexTearDetector
+from detectors.oven_burn import OvenBurnDetector
+from detectors.oven_flour import OvenFlourDetector
 from detectors.oven_frosting import OvenFrostingDetector
-from src.detectors.oven_burn import OvenBurnDetector
-from src.detectors.oven_flour import OvenFlourDetector
 
 
 class App(tk.Tk):

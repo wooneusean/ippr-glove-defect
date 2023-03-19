@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy as np
 
-from src.helpers.contour_helper import find_latex_contour, find_stain_contours
+from helpers.contour_helper import find_latex_contour, find_stain_contours
 
 
 class LatexStainDetector:
