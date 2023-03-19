@@ -62,6 +62,6 @@ class OvenFlourDetector(Detector):
         return overlay
 
 
-# img = cv.imread("../img/oven_flour_3.png")
-# img = cv.resize(img, (500, 500))
+# img = cv.imread("../img/oven_burn_1.png")
+# img = cv.resize(img, (416, 416))
 # OvenFlourDetector(img).detect()

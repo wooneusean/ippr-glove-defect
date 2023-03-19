@@ -17,9 +17,9 @@ from src.detectors.oven_flour import OvenFlourDetector
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.maxsize(1054, 451)
+        self.maxsize(1058, 451)
         self.resizable(False, False)
-        self.geometry("1054x451")
+        self.geometry("1058x451")
 
         self.image_list = []
         for file in os.listdir('img'):
@@ -66,7 +66,7 @@ class App(tk.Tk):
 
     def on_image_select(self, event):
         img_index = self.images_listbox.curselection()[0]
-        pil_img = Image.open('img/' + self.image_list[img_index]).resize((416, 416))
+        pil_img = Image.open('img/' + self.image_list[img_index]).resize((420, 420))
         self.ori_image = ImageTk.PhotoImage(pil_img)
         self.ori_image_label.configure(image=self.ori_image)
 
