@@ -217,8 +217,8 @@ def find_oven_contours(img):
 
 def find_frosting_contour(img):
     img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
-    frosting_lower = np.array([0, 130, 129])
-    frosting_upper = np.array([255, 255, 255])
+    frosting_lower = np.array([40, 120, 50])
+    frosting_upper = np.array([205, 175, 125])
     frosting_extracted = cv.inRange(img_lab, frosting_lower, frosting_upper)
 
     # cv.imshow("frosting_extracted", frosting_extracted)
