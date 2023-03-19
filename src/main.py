@@ -1,6 +1,7 @@
 import os
 import sys
 import tkinter as tk
+from tkinter import ttk
 
 import cv2 as cv
 import numpy as np
@@ -38,12 +39,25 @@ class App(tk.Tk):
         self.listbox_frame = tk.Frame(self)
         self.listbox_frame.grid(
             row=0, column=0, sticky=tk.NSEW, padx=5, pady=5)
+        self.listbox_frame.grid_rowconfigure(0, weight=5)
+        self.listbox_frame.grid_rowconfigure(0, weight=1)
 
         self.image_list_var = tk.Variable(value=self.image_list)
         self.images_listbox = tk.Listbox(
             self.listbox_frame, width=30, selectmode=tk.SINGLE, listvariable=self.image_list_var)
         self.images_listbox.bind('<<ListboxSelect>>', self.on_image_select)
-        self.images_listbox.pack(expand=True, fill=tk.BOTH)
+        self.images_listbox.grid(row=0, column=0, sticky=tk.NSEW)
+
+        self.mode_dropdown_var = tk.StringVar()
+        self.mode_dropdown = ttk.Combobox(
+            self.listbox_frame,
+            textvariable=self.mode_dropdown_var,
+            values=['Latex Glove', 'Oven Mitts', 'Leather Glove'],
+            state='readonly'
+        )
+        self.mode_dropdown.current(0)
+        self.mode_dropdown.grid(
+            row=1, column=0, sticky=tk.NSEW, pady=5)
 
         self.ori_image_frame = tk.Frame(self)
         self.ori_image_frame.grid(
@@ -65,31 +79,41 @@ class App(tk.Tk):
         self.prc_image_label.pack()
 
     def on_image_select(self, event):
+        if (len(self.images_listbox.curselection()) == 0):
+            return
+
         img_index = self.images_listbox.curselection()[0]
         # Increased res due to detection issues w/ oven mitts flour
-        pil_img = Image.open('img/' + self.image_list[img_index]).resize((500, 500))
+        pil_img = Image.open(
+            'img/' + self.image_list[img_index]).resize((500, 500))
         self.ori_image = ImageTk.PhotoImage(pil_img)
         self.ori_image_label.configure(image=self.ori_image)
 
         np_img = np.array(pil_img)
         np_img = cv.cvtColor(np_img, cv.COLOR_BGR2RGB)
 
-        # add your detection code here
-        # hole_result = LatexHoleDetector(np_img).detect()
-        # tear_result = LatexTearDetector(np_img).detect()
-        # stain_result = LatexStainDetector(np_img).detect()
+        result_list = []
 
-        # Oven Mitts Detectors
-        frosting_result = OvenFrostingDetector(np_img).detect()
-        burn_results = OvenBurnDetector(np_img).detect()
-        flour_results = OvenFlourDetector(np_img).detect()
+        # add your detection code here
+        if (self.mode_dropdown_var.get() == 'Latex Glove'):
+            # Latex Glove Detectors
+            result_list.append(LatexHoleDetector(np_img).detect())
+            result_list.append(LatexTearDetector(np_img).detect())
+            result_list.append(LatexStainDetector(np_img).detect())
+        elif (self.mode_dropdown_var.get() == 'Oven Mitts'):
+            # Oven Mitts Detectors
+            result_list.append(OvenFrostingDetector(np_img).detect())
+            result_list.append(OvenBurnDetector(np_img).detect())
+            result_list.append(OvenFlourDetector(np_img).detect())
+        elif (self.mode_dropdown_var.get() == 'Leather Glove'):
+            # Leather Glove Detectors
+            pass
 
         combined_result = np.zeros(
             (np_img.shape[0], np_img.shape[1], 4), dtype='uint8')
 
         # then add the result into this array
-        # for result in [hole_result, tear_result, stain_result]:
-        for result in [frosting_result, burn_results, flour_results]:
+        for result in result_list:
             combined_result += result
 
         alpha_foreground = combined_result[:, :, 3] / 255.0
