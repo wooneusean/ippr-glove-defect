@@ -75,7 +75,6 @@ def find_latex_contour(img):
         # cv.drawContours(img, [cnt], -1, (0, 255, 0), 2)
         # cv.putText(
         #     img,
-        #     str(current_contour_area),1
         #     tuple(cnt[0][0] + (10, 10)),
         #     cv.FONT_HERSHEY_SIMPLEX,
         #     0.5,
@@ -128,8 +127,6 @@ def find_stain_contours(img):
     # cv.imshow("stain_one_extracted", stain_one_extracted)
 
     # Black marker stains
-    stain_two_lower = np.array([35, 125, 105])
-    stain_two_higher = np.array([85, 135, 125])
     # stain_two_lower = np.array([40, 115, 100])
     # stain_two_higher = np.array([85, 135, 120])
 
@@ -317,10 +314,8 @@ def find_flour_contour(img):
     return new_contours
 
 
-
-# img = cv.imread("../img/oven_frosting_1.png")
-# img = cv.resize(img, (500, 500))
-# find_oven_contours(img)
-# find_frosting_contour(img)
-# find_burn_contour(img)
-# find_flour_contour(img)
+if __name__ == "__main__":
+    img = cv.imread("img/blue_glove_hole_5.jpg")
+    cv.imshow("img", img)
+    find_latex_contour(img)
+    cv.waitKey(0)
