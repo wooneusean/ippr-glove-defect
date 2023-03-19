@@ -14,14 +14,14 @@ class LeatherMouldDetector(Detector):
         img = cv.convertScaleAbs(img, alpha=1, beta=6)
 
         # Thresholding
-        value_lower = np.array([0, 0, 89])
-        value_higher = np.array([241, 11, 240])
+        value_lower = np.array([0, 0, 132])
+        value_higher = np.array([160, 11, 240])
 
         thresh = cv.inRange(img, value_lower, value_higher)
         thresh = cv.bitwise_not(thresh, thresh)
 
         # Morphological operations
-        kernel = np.ones((5, 5), np.uint8)
+        kernel = np.ones((7, 7), np.uint8)
         opening = cv.morphologyEx(thresh, cv.MORPH_OPEN, kernel)
         closing = cv.morphologyEx(opening, cv.MORPH_CLOSE, kernel)
 
@@ -34,7 +34,6 @@ class LeatherMouldDetector(Detector):
         # find min area rect
         minRectangle = [None]*len(contours)
         for i, contour in enumerate(contours):
-            if contour.shape[0] > 5:
                 minRectangle[i] = cv.boundingRect(contour)
 
         for i, contour in enumerate(contours):

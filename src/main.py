@@ -110,6 +110,9 @@ class App(tk.Tk):
             result_list.append(OvenFlourDetector(np_img).detect())
         elif (self.mode_dropdown_var.get() == 'Leather Glove'):
             # Leather Glove Detectors
+            result_list.append(LeatherMouldDetector(np_img).detect())
+            result_list.append(LeatherPunctureDetector(np_img).detect())
+            result_list.append(LeatherScratchDetector(np_img).detect())
             pass
 
         combined_result = np.zeros(

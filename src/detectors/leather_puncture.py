@@ -43,7 +43,7 @@ class LeatherPunctureDetector(Detector):
                 continue
 
             area = cv.contourArea(contour, False)
-            if 10 < area < 450:
+            if 10 < area < 550:
                 # Find the bounding box
                 bbox = cv.boundingRect(contour)
 
