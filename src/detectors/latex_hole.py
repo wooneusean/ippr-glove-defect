@@ -2,7 +2,6 @@ import cv2 as cv
 import numpy as np
 
 from detectors.detector_base import Detector
-from helpers.box_helper import is_within_bb
 from helpers.contour_helper import find_latex_contour, find_skin_contours
 
 

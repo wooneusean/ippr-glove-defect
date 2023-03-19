@@ -74,7 +74,6 @@ def find_latex_contour(img):
         # cv.drawContours(img, [cnt], -1, (0, 255, 0), 2)
         # cv.putText(
         #     img,
-        #     str(current_contour_area),
         #     tuple(cnt[0][0] + (10, 10)),
         #     cv.FONT_HERSHEY_SIMPLEX,
         #     0.5,
@@ -127,8 +126,8 @@ def find_stain_contours(img):
     # cv.imshow("stain_one_extracted", stain_one_extracted)
 
     # Black marker stains
-    stain_two_lower =   np.array([35, 125, 105])
-    stain_two_higher =  np.array([85, 135, 125])
+    stain_two_lower = np.array([35, 125, 105])
+    stain_two_higher = np.array([85, 135, 125])
     # stain_two_lower = np.array([40, 115, 100])
     # stain_two_higher = np.array([85, 135, 120])
 
@@ -170,6 +169,152 @@ def find_stain_contours(img):
     # cv.drawContours(img, stain_contours, -1, (0, 255, 0), 2)
     # cv.imshow("stain_combined_extracted", img)
     return stain_contours
+
+# if __name__ == "__main__":
+#     img = cv.imread("img/blue_glove_hole_5.jpg")
+#     cv.imshow("img", img)
+#     find_latex_contour(img)
+#     cv.waitKey(0)
+
+
+def find_oven_contours(img):
+    oven_lower = np.array([220, 126, 0])
+    oven_upper = np.array([255, 132, 130])
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    oven_extracted = cv.inRange(img_lab, oven_lower, oven_upper)
+    cv.bitwise_not(oven_extracted, oven_extracted)
+
+    # kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    # oven_extracted = cv.morphologyEx(oven_extracted, cv.MORPH_CLOSE, kernel)
+
+    # cv.imshow("oven_extracted", oven_extracted)
+
+    oven_contours, hierarchy = cv.findContours(
+        oven_extracted,
+        cv.RETR_TREE,
+        cv.CHAIN_APPROX_SIMPLE
+    )
+
+    largest_contour = None
+    largest_contour_area = -1
+    for i, contour in enumerate(oven_contours):
+        if hierarchy[0][i][3] != -1:
+            continue
+
+        current_contour_area = cv.contourArea(contour)
+
+        if largest_contour_area is None:
+            largest_contour_area = current_contour_area
+        elif current_contour_area > largest_contour_area:
+            largest_contour = contour
+            largest_contour_area = current_contour_area
+
+    # cv.drawContours(img, [largest_contour], -1, (0, 255, 0), 4)
+    # cv.imshow("oven_hole_extracted", img)
+    # cv.waitKey(0)
+
+    return largest_contour
+
+
+def find_frosting_contour(img):
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    frosting_lower = np.array([40, 120, 50])
+    frosting_upper = np.array([205, 175, 105])
+    frosting_extracted = cv.inRange(img_lab, frosting_lower, frosting_upper)
+
+    # cv.imshow("frosting_extracted", frosting_extracted)
+
+    # kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    # frosting_closed = cv.morphologyEx(frosting_extracted, cv.MORPH_CLOSE, kernel)
+
+    kernel = cv.getStructuringElement(cv.MORPH_RECT, (3, 3))
+    frosting_dilated = cv.dilate(frosting_extracted, kernel, iterations=3)
+
+    # cv.imshow("frosting_dilated", frosting_dilated)
+
+    contours, hierarchy = cv.findContours(
+        frosting_dilated,
+        cv.RETR_EXTERNAL,
+        cv.CHAIN_APPROX_NONE
+    )
+
+    new_contours = []
+    for contour in contours:
+        contour_area = cv.contourArea(contour)
+        # print(contour_area)
+        if contour_area > 75:
+            new_contours.append(contour)
+
+    # cv.drawContours(img, contours, -1, (255, 0, 0), 3)
+    # cv.imshow("contours", img)
+    # cv.waitKey(0)
+
+    return new_contours
+
+
+def find_burn_contour(img):
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    burn_lower = np.array([0, 0, 0])
+    burn_upper = np.array([25, 255, 255])
+    burn_extracted = cv.inRange(img_lab, burn_lower, burn_upper)
+
+    # cv.imshow("burn_extracted", burn_extracted)
+
+    kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, (5, 5))
+    burn_closed = cv.morphologyEx(burn_extracted, cv.MORPH_CLOSE, kernel)
+
+    contours, hierarchy = cv.findContours(
+        burn_closed,
+        cv.RETR_EXTERNAL,
+        cv.CHAIN_APPROX_NONE
+    )
+
+    new_contours = []
+    for contour in contours:
+        contour_area = cv.contourArea(contour)
+        if contour_area > 1900:
+            # print(contour_area)
+            new_contours.append(contour)
+
+    # cv.drawContours(img, new_contours, -1, (255, 0, 0), 3)
+    # cv.imshow("contours", img)
+    # cv.waitKey(0)
+
+    return new_contours
+
+
+def find_flour_contour(img):
+    img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
+    flour_lower = np.array([160, 115, 110])
+    flour_upper = np.array([255, 130, 150])
+    flour_extracted = cv.inRange(img_lab, flour_lower, flour_upper)
+
+    # cv.imshow("flour_extracted", flour_extracted)
+
+    kernel = cv.getStructuringElement(cv.MORPH_CROSS, (3, 3))
+    flour_morph = cv.dilate(flour_extracted, kernel, iterations=4)
+    # flour_morph = cv.erode(flour_morph, kernel, iterations=2)
+
+    # cv.imshow("flour_closed", flour_morph)
+
+    contours, hierarchy = cv.findContours(
+        flour_morph,
+        cv.RETR_TREE,
+        cv.CHAIN_APPROX_NONE
+    )
+
+    new_contours = []
+    for contour in contours:
+        contour_area = cv.contourArea(contour)
+        # print(contour_area)
+        if contour_area > 1000 and contour_area < 60000:
+            new_contours.append(contour)
+
+    # cv.drawContours(img, new_contours, -1, (255, 0, 0), 3)
+    # cv.imshow("contours", img)
+    # cv.waitKey(0)
+
+    return new_contours
 
 
 if __name__ == "__main__":
