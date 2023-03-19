@@ -9,6 +9,9 @@ from PIL import Image, ImageTk
 from detectors.latex_hole import LatexHoleDetector
 from detectors.latex_stain import LatexStainDetector
 from detectors.latex_tear import LatexTearDetector
+from src.detectors.leather_mould import LeatherMouldDetector
+from src.detectors.leather_puncture import LeatherPunctureDetector
+from src.detectors.leather_scratch import LeatherScratchDetector
 
 
 class App(tk.Tk):
@@ -63,7 +66,8 @@ class App(tk.Tk):
 
     def on_image_select(self, event):
         img_index = self.images_listbox.curselection()[0]
-        pil_img = Image.open('img/' + self.image_list[img_index]).resize((416, 416))
+        pil_img = Image.open('img/' + self.image_list[img_index]).resize((420, 420))
+
         self.ori_image = ImageTk.PhotoImage(pil_img)
         self.ori_image_label.configure(image=self.ori_image)
 
@@ -71,15 +75,20 @@ class App(tk.Tk):
         np_img = cv.cvtColor(np_img, cv.COLOR_BGR2RGB)
 
         # add your detection code here
+
         hole_result = LatexHoleDetector(np_img).detect()
         tear_result = LatexTearDetector(np_img).detect()
         stain_result = LatexStainDetector(np_img).detect()
+
+        mould_result = LeatherMouldDetector(np_img).detect()
+        scratch_result = LeatherScratchDetector(np_img).detect()
+        puncture_result = LeatherPunctureDetector(np_img).detect()
 
         combined_result = np.zeros(
             (np_img.shape[0], np_img.shape[1], 4), dtype='uint8')
 
         # then add the result into this array
-        for result in [hole_result, tear_result, stain_result]:
+        for result in [hole_result, tear_result, stain_result, mould_result, scratch_result, puncture_result]:
             combined_result += result
 
         alpha_foreground = combined_result[:, :, 3] / 255.0
