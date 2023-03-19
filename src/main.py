@@ -17,9 +17,9 @@ from src.detectors.oven_flour import OvenFlourDetector
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.maxsize(1058, 451)
+        self.maxsize(1138, 535)
         self.resizable(False, False)
-        self.geometry("1058x451")
+        self.geometry("1138x535")
 
         self.image_list = []
         for file in os.listdir('img'):
@@ -66,7 +66,8 @@ class App(tk.Tk):
 
     def on_image_select(self, event):
         img_index = self.images_listbox.curselection()[0]
-        pil_img = Image.open('img/' + self.image_list[img_index]).resize((420, 420))
+        # Increased res due to detection issues w/ oven mitts flour
+        pil_img = Image.open('img/' + self.image_list[img_index]).resize((500, 500))
         self.ori_image = ImageTk.PhotoImage(pil_img)
         self.ori_image_label.configure(image=self.ori_image)
 
@@ -78,6 +79,7 @@ class App(tk.Tk):
         # tear_result = LatexTearDetector(np_img).detect()
         # stain_result = LatexStainDetector(np_img).detect()
 
+        # Oven Mitts Detectors
         frosting_result = OvenFrostingDetector(np_img).detect()
         burn_results = OvenBurnDetector(np_img).detect()
         flour_results = OvenFlourDetector(np_img).detect()
