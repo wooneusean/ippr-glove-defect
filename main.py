@@ -10,12 +10,13 @@ from PIL import Image, ImageTk
 from detectors.latex_hole import LatexHoleDetector
 from detectors.latex_stain import LatexStainDetector
 from detectors.latex_tear import LatexTearDetector
+from detectors.leather_mould import LeatherMouldDetector
+from detectors.leather_puncture import LeatherPunctureDetector
+from detectors.leather_scratch import LeatherScratchDetector
 from detectors.oven_burn import OvenBurnDetector
 from detectors.oven_flour import OvenFlourDetector
 from detectors.oven_frosting import OvenFrostingDetector
-from src.detectors.leather_mould import LeatherMouldDetector
-from src.detectors.leather_puncture import LeatherPunctureDetector
-from src.detectors.leather_scratch import LeatherScratchDetector
+
 
 class App(tk.Tk):
 
