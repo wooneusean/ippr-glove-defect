@@ -1,8 +1,8 @@
-import numpy as np
 import cv2 as cv
+import numpy as np
 
-from src.detectors.detector_base import Detector
-from src.helpers.contour_helper import find_frosting_contour, find_oven_contours
+from detectors.detector_base import Detector
+from helpers.contour_helper import find_frosting_contour, find_oven_contours
 
 
 class OvenFrostingDetector(Detector):

@@ -46,7 +46,6 @@ def find_skin_contours(img):
     return a_contours
 
 
-
 def find_latex_contour(img):
     latex_lower = np.array([0, 0, 0])
     latex_higher = np.array([255, 120, 255])
@@ -75,7 +74,6 @@ def find_latex_contour(img):
         # cv.drawContours(img, [cnt], -1, (0, 255, 0), 2)
         # cv.putText(
         #     img,
-        #     str(current_contour_area),1
         #     tuple(cnt[0][0] + (10, 10)),
         #     cv.FONT_HERSHEY_SIMPLEX,
         #     0.5,
@@ -171,6 +169,7 @@ def find_stain_contours(img):
     # cv.drawContours(img, stain_contours, -1, (0, 255, 0), 2)
     # cv.imshow("stain_combined_extracted", img)
     return stain_contours
+    
 def find_oven_contours(img):
     oven_lower = np.array([200, 115, 115])
     oven_upper = np.array([205, 120, 120])
@@ -197,6 +196,7 @@ def find_oven_contours(img):
     # cv.waitKey(0)
 
     return oven_contours
+
 
 def find_frosting_contour(img):
     img_lab = cv.cvtColor(img, cv.COLOR_BGR2LAB)
@@ -286,7 +286,6 @@ def find_flour_contour(img):
         cv.CHAIN_APPROX_NONE
     )
 
-
     new_contours = []
     for contour in contours:
         contour_area = cv.contourArea(contour)
@@ -299,10 +298,9 @@ def find_flour_contour(img):
     # cv.waitKey(0)
 
     return new_contours
-
-# img = cv.imread("../img/burn_4.png")
-# img = cv.resize(img, (500, 500))
-# find_burn_contour(img)
-# find_frosting_contour(img)
-# find_flour_contour(img)
-# find_oven_contours(img)
+    
+if __name__ == "__main__":
+    img = cv.imread("img/blue_glove_hole_5.jpg")
+    cv.imshow("img", img)
+    find_latex_contour(img)
+    cv.waitKey(0)
