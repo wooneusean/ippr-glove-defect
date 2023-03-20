@@ -17,8 +17,10 @@ from src.detectors.leather_mould import LeatherMouldDetector
 from src.detectors.leather_puncture import LeatherPunctureDetector
 from src.detectors.leather_scratch import LeatherScratchDetector
 
-
 class App(tk.Tk):
+
+    i = 0
+
     def __init__(self):
         super().__init__()
         self.maxsize(1138, 535)
@@ -126,6 +128,26 @@ class App(tk.Tk):
         for color in range(0, 3):
             np_img[:, :, color] = (1.0 - alpha_foreground) * np_img[:, :, color] + \
                 alpha_foreground * combined_result[:, :, color]
+
+        # Used for saving images
+        # self.i += 1
+        # cv.imwrite("output_" + str(self.i) + ".png", np_img)
+        # cv.waitKey(0)
+
+        # Used for saving images
+        # self.i += 1
+        # cv.imwrite("output_" + str(self.i) + ".png", np_img)
+        # cv.waitKey(0)
+
+        # Used for saving images
+        # self.i += 1
+        # cv.imwrite("output_" + str(self.i) + ".png", np_img)
+        # cv.waitKey(0)
+
+        # Used for saving images
+        # self.i += 1
+        # cv.imwrite("output_" + str(self.i) + ".png", np_img)
+        # cv.waitKey(0)
 
         np_img = cv.cvtColor(np_img, cv.COLOR_RGB2BGR)
         pil_img = Image.fromarray(np.uint8(np_img))

@@ -17,44 +17,34 @@ class OvenFrostingDetector(Detector):
         if frosting_contours is None:
             return overlay
 
-        for i, contour in enumerate(frosting_contours):
+        message = 'Frosting'
 
-            x, y, w, h = cv.boundingRect(contour)
+        for i, glove in enumerate(oven_contour):
+            for j, contour in enumerate(frosting_contours):
+                moments = cv.moments(contour)
+                cX = int(moments["m10"] / moments["m00"])
+                cY = int(moments["m01"] / moments["m00"])
+                x, y, w, h = cv.boundingRect(contour)
 
-            center_x = x + w/2
-            center_y = y + h/2
-            is_on_glove = cv.pointPolygonTest(
-                oven_contour,
-                (center_x, center_y),
-                False
-            )
+                is_on_glove = cv.pointPolygonTest(
+                    glove,
+                    (cX, cY),
+                    False
+                )
 
-            if is_on_glove:
-                cv.rectangle(overlay, (x, y), ((x+w), (y+h)), (0, 255, 0, 255), 2)
+                if is_on_glove > 0:
+                    cv.rectangle(overlay, (x, y), ((x + w), (y + h)), (180, 105, 255, 255), 2)
 
-            # cv.imshow("overlay", overlay)
-            # cv.waitKey(0)
-
-            message = 'Frosting'
-            text_size, _ = cv.getTextSize(
-                message,
-                cv.FONT_HERSHEY_SIMPLEX,
-                0.5,
-                1
-            )
-
-            text_width, text_height = text_size
-            cv.putText(
-                overlay,
-                message,
-                (x, y+h+text_height+5),
-                cv.FONT_HERSHEY_SIMPLEX,
-                0.5,
-                (0, 255, 0, 255),
-                1,
-                cv.LINE_AA,
-            )
-
+                    cv.putText(
+                        overlay,
+                        message,
+                        (x, y - 5),
+                        cv.FONT_HERSHEY_SIMPLEX,
+                        0.5,
+                        (180, 105, 255, 255),
+                        1,
+                        cv.LINE_AA,
+                    )
 
         # cv.imshow("overlay", overlay)
         # cv.waitKey(0)
@@ -62,6 +52,6 @@ class OvenFrostingDetector(Detector):
         return overlay
 
 
-# img = cv.imread("../img/oven_frosting_1.png")
+# img = cv.imread("../img/burn_3.png")
 # img = cv.resize(img, (500, 500))
 # OvenFrostingDetector(img).detect()
