@@ -5,18 +5,18 @@ def on_change(val):
     pass
 
 
-# img = cv2.imread('./img/oven_burn_1.png')
-img = cv2.imread('./img/oven_frosting_1.png')
-img = cv2.resize(img, (400, 400))
+img = cv2.imread('./img/burn_3.png')
+# img = cv2.imread('./img/frosting_3.png')
+img = cv2.resize(img, (500, 500))
 
 windowName = 'image'
 cv2.namedWindow(windowName)
 cv2.createTrackbar('L upper', windowName, 205, 255, on_change)
-cv2.createTrackbar('L lower', windowName, 40, 255, on_change)
-cv2.createTrackbar('A upper', windowName, 175, 255, on_change)
-cv2.createTrackbar('A lower', windowName, 120, 255, on_change)
-cv2.createTrackbar('B upper', windowName, 125, 255, on_change)
-cv2.createTrackbar('B lower', windowName, 50, 255, on_change)
+cv2.createTrackbar('L lower', windowName, 200, 255, on_change)
+cv2.createTrackbar('A upper', windowName, 125, 255, on_change)
+cv2.createTrackbar('A lower', windowName, 115, 255, on_change)
+cv2.createTrackbar('B upper', windowName, 120, 255, on_change)
+cv2.createTrackbar('B lower', windowName, 115, 255, on_change)
 
 while(1):
 
