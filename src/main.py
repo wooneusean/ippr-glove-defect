@@ -13,6 +13,9 @@ from detectors.latex_tear import LatexTearDetector
 from detectors.oven_burn import OvenBurnDetector
 from detectors.oven_flour import OvenFlourDetector
 from detectors.oven_frosting import OvenFrostingDetector
+from src.detectors.leather_mould import LeatherMouldDetector
+from src.detectors.leather_puncture import LeatherPunctureDetector
+from src.detectors.leather_scratch import LeatherScratchDetector
 
 
 class App(tk.Tk):
@@ -107,6 +110,9 @@ class App(tk.Tk):
             result_list.append(OvenFlourDetector(np_img).detect())
         elif (self.mode_dropdown_var.get() == 'Leather Glove'):
             # Leather Glove Detectors
+            result_list.append(LeatherMouldDetector(np_img).detect())
+            result_list.append(LeatherPunctureDetector(np_img).detect())
+            result_list.append(LeatherScratchDetector(np_img).detect())
             pass
 
         combined_result = np.zeros(
