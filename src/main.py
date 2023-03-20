@@ -113,6 +113,16 @@ class App(tk.Tk):
         # cv.imwrite("output_" + str(self.i) + ".png", np_img)
         # cv.waitKey(0)
 
+        # Used for saving images
+        # self.i += 1
+        # cv.imwrite("output_" + str(self.i) + ".png", np_img)
+        # cv.waitKey(0)
+
+        # Used for saving images
+        # self.i += 1
+        # cv.imwrite("output_" + str(self.i) + ".png", np_img)
+        # cv.waitKey(0)
+
         np_img = cv.cvtColor(np_img, cv.COLOR_RGB2BGR)
         pil_img = Image.fromarray(np.uint8(np_img))
         self.prc_image = ImageTk.PhotoImage(pil_img)

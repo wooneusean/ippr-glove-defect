@@ -300,9 +300,9 @@ def find_flour_contour(img):
 
     return new_contours
 
-# img = cv.imread("../img/oven_frosting_1.png")
+# img = cv.imread("../img/burn_4.png")
 # img = cv.resize(img, (500, 500))
-# find_oven_contours(img)
-# find_frosting_contour(img)
 # find_burn_contour(img)
+# find_frosting_contour(img)
 # find_flour_contour(img)
+# find_oven_contours(img)
